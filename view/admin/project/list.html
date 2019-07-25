@@ -9,10 +9,11 @@
             <table class="table table-hover" id="list">
                 <thead>
                     <tr>
-                        <th>PID</th>
-                        <th>Name</th>
-                        <th>Git</th>
-                        <th>-</th>
+                        <th width="50">PID</th>
+                        <th width="200">名称</th>
+                        <th width="50">Git</th>
+                        <th>备注</th>
+                        <th width="200">-</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,12 +21,14 @@
                     <tr>
                         <td>{[{.PID}]}</td>
                         <td>{[{.Name}]}</td>
-                        <td><a href="{[{.Git}]}" target="_blank">{[{.Git}]}</a></td>
+                        <td>{[{if .Git}]}<a href="{[{.Git}]}" target="_blank">打开</a>{[{end}]}</td>
+                        <td>{[{.Desc}]}</td>
                         <td>
-                            <a href="/admin_task/list_by_project?ProjectPID={[{.PID}]}" class="btn btn-success">任务列表</a>
-                            <a href="/admin_project/edit?PID={[{.PID}]}" class="btn btn-primary">编辑</a>
-                            <a href="/admin_project/delete?PID={[{.PID}]}" onclick="return confirm('确定删除吗？')"
-                                class="btn btn-danger">删除</a>
+                            <a href="/admin_task/list_by_project?ProjectPID={[{.PID}]}"
+                                class="btn btn-xs btn-success">任务列表</a>
+                            <a href="/admin_project/edit?PID={[{.PID}]}" class="btn btn-xs btn-primary">编辑</a>
+                            <!-- <a href="/admin_project/delete?PID={[{.PID}]}" onclick="return confirm('确定删除吗？')"
+                                class="btn btn-xs btn-danger">删除</a> -->
                         </td>
                     </tr>
                     {[{ end }]}
@@ -46,7 +49,7 @@
             'info': true,
             'autoWidth': true,
             'pageLength': 50,
-            "order": [[0,"desc"]]
+            "order": [[0, "desc"]]
         })
     })
 </script>

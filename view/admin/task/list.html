@@ -27,31 +27,40 @@
             <table class="table table-hover" id="list">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>项目</th>
-                        <th>负责人</th>
-                        <th>名称</th>
-                        <th>Git</th>
-                        <th>日期</th>
-                        <th>进度</th>
-                        <th>-</th>
+                        <th width="50">ID</th>
+                        {[{if not .ProjectPID}]}
+                        <th width="200">项目</th>
+                        {[{end}]}
+                        {[{if not .UserUID}]}
+                        <th width="100">负责人</th>
+                        {[{end}]}
+                        <th>任务名称</th>
+                        <th width="50">Git</th>
+                        <th width="200">日期</th>
+                        <th width="50">进度</th>
+                        <th width="100">-</th>
                     </tr>
                 </thead>
                 <tbody>
                     {[{ range .ts}]}
                     <tr>
                         <td>{[{.TID}]}</td>
+                        {[{if not $.ProjectPID}]}
                         <td><a href="/admin_task/list_by_project?ProjectPID={[{.ProjectPID}]}">{[{.Project.Name}]}</a>
                         </td>
+                        {[{end}]}
+                        {[{if not $.UserUID}]}
                         <td><a href="/admin_task/list_by_user?UserUID={[{.UserUID}]}">{[{.User.User}]}</a></td>
+                        {[{end}]}
                         <td>{[{.Name}]}</td>
-                        <td><a href="{[{.Git}]}" target="_blank">{[{.Git}]}</a></td>
+                        <td>{[{if .Git}]}<a href="{[{.Git}]}" target="_blank">打开</a>{[{end}]}</td>
                         <td>{[{.Start}]} - {[{.End}]}</td>
                         <td>{[{.Progress}]}%</td>
                         <td>
-                            <a href="/admin_task/edit?from={[{$.from}]}&TID={[{.TID}]}" class="btn btn-primary">编辑</a>
-                            <a href="/admin_task/delete?from={[{$.from}]}&ProjectPID={[{.ProjectPID}]}&UserUID={[{.UserUID}]}&TID={[{.TID}]}"
-                                onclick="return confirm('确定删除吗？')" class="btn btn-danger">删除</a>
+                            <a href="/admin_task/edit?from={[{$.from}]}&TID={[{.TID}]}"
+                                class="btn btn-xs btn-primary">编辑</a>
+                            <!-- <a href="/admin_task/delete?from={[{$.from}]}&ProjectPID={[{.ProjectPID}]}&UserUID={[{.UserUID}]}&TID={[{.TID}]}"
+                                onclick="return confirm('确定删除吗？')" class="btn btn-xs btn-danger">删除</a> -->
                         </td>
                     </tr>
                     {[{ end }]}
@@ -76,13 +85,20 @@
         })
     })
 
+    var from = "{[{.from}]}"
     var ts = JSON.parse("{[{.ts|json}]}")
     var tasks = []
     for (var i = 0; i < ts.length; i++) {
         var o = ts[i]
         var x = new Date(o.Start), y = new Date(o.End);
         var duration = (y - x) / 1000 / 3600 / 24 + 1;
-        tasks.push({ id: o.TID, text: o.Name, user: o.User.Name, start_date: o.Start.replace(/(\d+)-(\d+)-(\d+)/, "$3-$2-$1"), duration: duration, progress: o.Progress / 100 })
+        var prefix = ""
+        switch (from) {
+            case "user": prefix = o.Project.Name + ": "; break;
+            case "project": prefix = o.User.Name + ": "; break;
+            default: prefix = o.Project.Name + " - " + o.User.Name + ": "; break;
+        }
+        tasks.push({ id: o.TID, text: prefix + o.Name, start_date: o.Start.replace(/(\d+)-(\d+)-(\d+)/, "$3-$2-$1"), duration: duration, progress: o.Progress / 100 })
     }
 
     var zoomConfig = {
