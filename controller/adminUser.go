@@ -28,14 +28,22 @@ func (o *AdminUserController) List(ctx *hst.Context) {
 // Add 增加用户
 func (o *AdminUserController) Add(ctx *hst.Context) {
 	if ctx.R.Method == "GET" {
-		o.renderAdmin(ctx, nil, "admin/user/add.html")
+		us, err := users.List()
+		if err != nil {
+			o.renderAdminError(ctx, err.Error())
+		}
+
+		o.renderAdmin(ctx, map[string]interface{}{"us": us}, "admin/user/add.html")
 	}
 
+	puid, _ := strconv.Atoi(ctx.R.FormValue("ParentUID"))
+
 	u := &model.User{
-		User:  ctx.R.FormValue("User"),
-		Name:  ctx.R.FormValue("Name"),
-		Pass:  string(util.Hash([]byte(ctx.R.FormValue("Pass")))),
-		Email: ctx.R.FormValue("Email"),
+		User:      ctx.R.FormValue("User"),
+		Name:      ctx.R.FormValue("Name"),
+		Pass:      string(util.Hash([]byte(ctx.R.FormValue("Pass")))),
+		Email:     ctx.R.FormValue("Email"),
+		ParentUID: puid,
 	}
 	if err := users.Save(u); err != nil {
 		o.renderAdminError(ctx, err.Error())
@@ -46,13 +54,18 @@ func (o *AdminUserController) Add(ctx *hst.Context) {
 // Edit 编辑用户
 func (o *AdminUserController) Edit(ctx *hst.Context) {
 	uid, _ := strconv.Atoi(ctx.R.FormValue("UID"))
+	puid, _ := strconv.Atoi(ctx.R.FormValue("ParentUID"))
 	u, err := users.Get(uid)
 	if err != nil {
 		o.renderAdminError(ctx, err.Error())
 	}
 
 	if ctx.R.Method == "GET" {
-		o.renderAdmin(ctx, u, "admin/user/edit.html")
+		us, err := users.List()
+		if err != nil {
+			o.renderAdminError(ctx, err.Error())
+		}
+		o.renderAdmin(ctx, map[string]interface{}{"us": us, "u": u}, "admin/user/edit.html")
 	}
 
 	pass := ctx.R.FormValue("Pass")
@@ -62,6 +75,7 @@ func (o *AdminUserController) Edit(ctx *hst.Context) {
 	u.User = ctx.R.FormValue("User")
 	u.Name = ctx.R.FormValue("Name")
 	u.Email = ctx.R.FormValue("Email")
+	u.ParentUID = puid
 	if err := u.Save(u); err != nil {
 		o.renderAdminError(ctx, err.Error())
 	}

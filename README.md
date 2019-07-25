@@ -15,7 +15,7 @@
 docker pull ohko/pm
 docker rm -fv pm; \
 	docker run -d --name pm --restart=always \
-		-p 127.0.0.1:8082:8080 \
+		-p 8082:8080 \
 		-v /data/docker-pm:/db \
 		-v /usr/share/zoneinfo:/usr/share/zoneinfo:ro \
 		-e LOG_LEVEL=1 \

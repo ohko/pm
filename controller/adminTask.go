@@ -16,6 +16,16 @@ type AdminTaskController struct {
 	controller
 }
 
+// List 任务列表
+func (o *AdminTaskController) List(ctx *hst.Context) {
+	ts, err := tasks.List()
+	if err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
+
+	o.renderAdmin(ctx, map[string]interface{}{"ts": ts}, "admin/task/list.html")
+}
+
 // ListByProject 项目任务列表
 func (o *AdminTaskController) ListByProject(ctx *hst.Context) {
 	pid, _ := strconv.Atoi(ctx.R.FormValue("ProjectPID"))
@@ -79,6 +89,8 @@ func (o *AdminTaskController) Add(ctx *hst.Context) {
 		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_project?ProjectPID="+ctx.R.FormValue("ProjectPID"), http.StatusFound)
 	case "user":
 		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_user?UserUID="+ctx.R.FormValue("UserUID"), http.StatusFound)
+	default:
+		http.Redirect(ctx.W, ctx.R, "/admin_task/list", http.StatusFound)
 	}
 }
 
@@ -127,6 +139,8 @@ func (o *AdminTaskController) Edit(ctx *hst.Context) {
 		http.Redirect(ctx.W, ctx.R, fmt.Sprintf("/admin_task/list_by_project?ProjectPID=%d", t.ProjectPID), http.StatusFound)
 	case "user":
 		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_user?UserUID="+ctx.R.FormValue("UserUID"), http.StatusFound)
+	default:
+		http.Redirect(ctx.W, ctx.R, "/admin_task/list", http.StatusFound)
 	}
 }
 

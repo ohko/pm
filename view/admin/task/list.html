@@ -1,8 +1,24 @@
 {[{ define "body" }]}
 <link rel="stylesheet" href="/public/css/dhtmlxgantt.css">
 <section class="content-header">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">甘特图</h3>
+            <div class="pull-right box-tools">
+                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('day')">天</button>
+                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('week')">周</button>
+                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('month')">月</button>
+                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('year')">年</button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div id="gantt_here" style='width:100%; min-height: 500px;'></div>
+        </div>
+    </div>
+
     <a href="/admin_task/add?from={[{.from}]}&ProjectPID={[{.ProjectPID}]}&UserUID={[{.UserUID}]}"
         class="btn btn-primary">添加</a>
+
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">任务列表</h3>
@@ -43,21 +59,6 @@
             </table>
         </div>
     </div>
-
-    <div class="box">
-        <div class="box-header">
-            <h3 class="box-title">甘特图</h3>
-            <div class="pull-right box-tools">
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('day')">天</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('week')">周</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('month')">月</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('year')">年</button>
-            </div>
-        </div>
-        <div class="box-body">
-            <div id="gantt_here" style='width:100%; min-height: 500px;'></div>
-        </div>
-    </div>
 </section>
 
 <script src="/public/js/dhtmlxgantt.js"></script>
@@ -69,7 +70,9 @@
             'searching': true,
             'ordering': true,
             'info': true,
-            'autoWidth': true
+            'autoWidth': true,
+            'pageLength': 50,
+            "order": [[0, "desc"]]
         })
     })
 

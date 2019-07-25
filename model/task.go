@@ -25,6 +25,15 @@ func NewTask() *Task {
 	return new(Task)
 }
 
+// List ...
+func (o *Task) List() ([]*Task, error) {
+	var ts []*Task
+	if err := db.Preload("Project").Preload("User").Find(&ts).Error; err != nil {
+		return nil, err
+	}
+	return ts, nil
+}
+
 // ListByPID ...
 func (o *Task) ListByPID(pid int) ([]*Task, error) {
 	if pid == 0 {

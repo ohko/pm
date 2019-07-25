@@ -10,16 +10,27 @@
                 <!-- /.box-header -->
                 <!-- form start -->
                 <form role="form" method="POST">
-                    <input name="UID" value="{[{ .UID }]}" type="hidden">
+                    <input name="UID" value="{[{ .u.UID }]}" type="hidden">
                     <div class="box-body">
                         <div class="form-group">
+                            <label>上级</label>
+                            <select class="form-control" name="ParentUID">
+                                <option></option>
+                                {[{range .us}]}
+                                <option value="{[{ .UID }]}" {[{if eq .UID $.u.ParentUID}]}selected{[{end}]}>{[{.Name}]}
+                                </option>
+                                {[{end}]}
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>帐号</label>
-                            <input type="text" class="form-control" placeholder="输入用户名" name="User" value="{[{ .User }]}">
+                            <input type="text" class="form-control" placeholder="输入用户名" name="User"
+                                value="{[{ .u.User }]}">
                         </div>
                         <div class="form-group">
                             <label>姓名</label>
                             <input type="text" class="form-control" placeholder="输入姓名" name="Name"
-                                value="{[{ .Name }]}">
+                                value="{[{ .u.Name }]}">
                         </div>
                         <div class="form-group">
                             <label>密码</label>
@@ -28,7 +39,7 @@
                         <div class="form-group">
                             <label>邮箱</label>
                             <input type="email" class="form-control" placeholder="输入邮箱地址" name="Email"
-                                value="{[{ .Email }]}">
+                                value="{[{ .u.Email }]}">
                         </div>
                     </div>
                     <!-- /.box-body -->

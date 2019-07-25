@@ -9,11 +9,12 @@ import (
 
 // User 用户模型
 type User struct {
-	UID   int    `gorm:"PRIMARY_KEY;AUTO_INCREMENT"`
-	User  string `gorm:"UNIQE"` // 昵称
-	Name  string // 姓名
-	Pass  string `json:"-"` // 密码
-	Email string // 邮箱
+	UID       int    `gorm:"PRIMARY_KEY;AUTO_INCREMENT"`
+	User      string `gorm:"UNIQE"` // 昵称
+	Name      string // 姓名
+	Pass      string `json:"-"` // 密码
+	Email     string // 邮箱
+	ParentUID int    // 上级管理人员UID
 }
 
 // NewUser ...

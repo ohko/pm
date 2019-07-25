@@ -1,6 +1,16 @@
 {[{ define "body" }]}
 <section class="content-header">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">人员结构</h3>
+        </div>
+        <div class="box-body">
+            <div id="user-tree" style='width:100%; min-height: 500px;'></div>
+        </div>
+    </div>
+
     <a href="/admin_user/add" class="btn btn-primary">添加</a>
+
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">Users</h3>
@@ -37,8 +47,19 @@
     </div>
 </section>
 
-
+<script src="/public/js/echarts.min.js"></script>
 <script>
+    function getSub(parentID, arr) {
+        var tmp = []
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].parentID == parentID) {
+                arr[i].children = getSub(arr[i].uid, arr)
+                tmp.push(arr[i])
+            }
+        }
+        return tmp
+    }
+
     $(function () {
         $('#list').DataTable({
             'paging': true,
@@ -46,8 +67,61 @@
             'searching': true,
             'ordering': true,
             'info': true,
-            'autoWidth': true
+            'autoWidth': true,
+            'pageLength': 50,
         })
+
+        var us = JSON.parse('{[{.us|json}]}')
+        var tmp = [{ name: "技术部", children: [], uid: 0, parentID: -1, collapsed: false }]
+        for (var i = 0; i < us.length; i++) tmp.push({ name: us[i].Name, children: [], uid: us[i].UID, parentID: us[i].ParentUID, collapsed: false })
+        console.log(tmp)
+        var arr = getSub(-1, tmp)
+        console.log(arr)
+
+        var myChart = echarts.init(document.getElementById('user-tree'));
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            series: [
+                {
+                    type: 'tree',
+
+                    data: arr,
+
+                    top: '1%',
+                    left: '7%',
+                    bottom: '1%',
+                    right: '20%',
+
+                    // symbolSize: 7,
+
+                    label: {
+                        normal: {
+                            position: 'bottom',
+                            verticalAlign: 'middle',
+                            // align: 'right',
+                        }
+                    },
+
+                    leaves: {
+                        label: {
+                            normal: {
+                                position: 'right',
+                                verticalAlign: 'middle',
+                                // align: 'left'
+                            }
+                        }
+                    },
+
+                    expandAndCollapse: true,
+                    animationDuration: 550,
+                    animationDurationUpdate: 750
+                }
+            ]
+        };
+        myChart.setOption(option);
     })
 </script>
 {[{ end }]}
