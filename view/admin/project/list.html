@@ -1,0 +1,51 @@
+{[{ define "body" }]}
+<section class="content-header">
+    <a href="/admin_project/add" class="btn btn-primary">添加</a>
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">项目</h3>
+        </div>
+        <div class="box-body">
+            <table class="table table-hover" id="list">
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>Name</th>
+                        <th>Git</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {[{ range .ps}]}
+                    <tr>
+                        <td>{[{.PID}]}</td>
+                        <td>{[{.Name}]}</td>
+                        <td><a href="{[{.Git}]}" target="_blank">{[{.Git}]}</a></td>
+                        <td>
+                            <a href="/admin_task/list_by_project?ProjectPID={[{.PID}]}" class="btn btn-success">任务列表</a>
+                            <a href="/admin_project/edit?PID={[{.PID}]}" class="btn btn-primary">编辑</a>
+                            <a href="/admin_project/delete?PID={[{.PID}]}" onclick="return confirm('确定删除吗？')"
+                                class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    {[{ end }]}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+        $('#list').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': true
+        })
+    })
+</script>
+{[{ end }]}
