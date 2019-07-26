@@ -5,14 +5,14 @@
         <div class="box-header">
             <h3 class="box-title">甘特图</h3>
             <div class="pull-right box-tools">
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('day')">天</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('week')">周</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('month')">月</button>
-                <button class="btn btn-default btn-sm" onclick="gantt.ext.zoom.setLevel('year')">年</button>
+                <button class="btn btn-default btn-sm" onclick="ganttZoom('day')">天</button>
+                <button class="btn btn-default btn-sm" onclick="ganttZoom('week')">周</button>
+                <button class="btn btn-default btn-sm" onclick="ganttZoom('month')">月</button>
+                <button class="btn btn-default btn-sm" onclick="ganttZoom('year')">年</button>
             </div>
         </div>
         <div class="box-body">
-            <div id="gantt_here" style='width:100%; min-height: 500px;'></div>
+            <div id="gantt_here" style='width:100%; min-height: 800px;'></div>
         </div>
     </div>
 
@@ -148,7 +148,12 @@
     };
 
     gantt.ext.zoom.init(zoomConfig);
-    gantt.ext.zoom.setLevel("day");
+    var level = localStorage.getItem("ganttZoom")
+    gantt.ext.zoom.setLevel(level ? level : 'month');
+    function ganttZoom(level) {
+        localStorage.setItem("ganttZoom", level)
+        gantt.ext.zoom.setLevel(level)
+    }
 
     gantt.config.show_grid = false;
     gantt.config.readonly = true;
