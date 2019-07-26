@@ -1,5 +1,3 @@
-[![Build Status](https://drone-github.cdeyun.com/api/badges/ohko/pm/status.svg)](https://drone-github.cdeyun.com/ohko/pm)
-
 # PM
 
 项目管理协助工具
@@ -9,6 +7,8 @@
 - 成员管理
 - 项目任务纬度甘特图
 - 成员任务纬度甘特图
+
+![](preview.png)
 
 ## 启动服务
 ```shell
