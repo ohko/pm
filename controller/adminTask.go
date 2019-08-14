@@ -145,17 +145,19 @@ func (o *AdminTaskController) Edit(ctx *hst.Context) {
 }
 
 // Delete 删除任务
-// func (o *AdminTaskController) Delete(ctx *hst.Context) {
-// 	from := ctx.R.FormValue("from")
-// 	tid, _ := strconv.Atoi(ctx.R.FormValue("TID"))
-// 	if err := tasks.Delete(tid); err != nil {
-// 		o.renderAdminError(ctx, err.Error())
-// 	}
+func (o *AdminTaskController) Delete(ctx *hst.Context) {
+	from := ctx.R.FormValue("from")
+	tid, _ := strconv.Atoi(ctx.R.FormValue("TID"))
+	if err := tasks.Delete(tid); err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
 
-// 	switch from {
-// 	case "project":
-// 		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_project?ProjectPID="+ctx.R.FormValue("ProjectPID"), http.StatusFound)
-// 	case "user":
-// 		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_user?UserUID="+ctx.R.FormValue("UserUID"), http.StatusFound)
-// 	}
-// }
+	switch from {
+	case "project":
+		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_project?ProjectPID="+ctx.R.FormValue("ProjectPID"), http.StatusFound)
+	case "user":
+		http.Redirect(ctx.W, ctx.R, "/admin_task/list_by_user?UserUID="+ctx.R.FormValue("UserUID"), http.StatusFound)
+	default:
+		http.Redirect(ctx.W, ctx.R, "/admin_task/list", http.StatusFound)
+	}
+}

@@ -64,11 +64,20 @@ func (o *AdminProjectController) Edit(ctx *hst.Context) {
 }
 
 // Delete 删除项目
-// func (o *AdminProjectController) Delete(ctx *hst.Context) {
-// 	pid, _ := strconv.Atoi(ctx.R.FormValue("PID"))
-// 	if err := projects.Delete(pid); err != nil {
-// 		o.renderAdminError(ctx, err.Error())
-// 	}
+func (o *AdminProjectController) Delete(ctx *hst.Context) {
+	pid, _ := strconv.Atoi(ctx.R.FormValue("PID"))
 
-// 	http.Redirect(ctx.W, ctx.R, "/admin_project/list", http.StatusFound)
-// }
+	ts, err := tasks.ListByPID(pid)
+	if err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
+	if len(ts) > 0 {
+		o.renderAdminError(ctx, "当前项目还有任务，不能删除")
+	}
+
+	if err := projects.Delete(pid); err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
+
+	http.Redirect(ctx.W, ctx.R, "/admin_project/list", http.StatusFound)
+}
