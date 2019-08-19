@@ -83,11 +83,20 @@ func (o *AdminUserController) Edit(ctx *hst.Context) {
 }
 
 // Delete 删除用户
-// func (o *AdminUserController) Delete(ctx *hst.Context) {
-// 	uid, _ := strconv.Atoi(ctx.R.FormValue("UID"))
-// 	if err := users.Delete(uid); err != nil {
-// 		o.renderAdminError(ctx, err.Error())
-// 	}
+func (o *AdminUserController) Delete(ctx *hst.Context) {
+	uid, _ := strconv.Atoi(ctx.R.FormValue("UID"))
 
-// 	http.Redirect(ctx.W, ctx.R, "/admin_user/list", http.StatusFound)
-// }
+	ts, err := tasks.ListByUser(uid)
+	if err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
+	if len(ts) > 0 {
+		o.renderAdminError(ctx, "当前用户还有任务，不能删除")
+	}
+
+	if err := users.Delete(uid); err != nil {
+		o.renderAdminError(ctx, err.Error())
+	}
+
+	http.Redirect(ctx.W, ctx.R, "/admin_user/list", http.StatusFound)
+}
