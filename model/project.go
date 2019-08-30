@@ -10,6 +10,7 @@ type Project struct {
 	Name string // 名称
 	Desc string // 备注
 	Git  string // git地址
+	URL  string // url地址
 }
 
 // NewProject ...

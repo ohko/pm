@@ -20,7 +20,8 @@
                     {[{ range .ps}]}
                     <tr>
                         <td>{[{.PID}]}</td>
-                        <td>{[{.Name}]}</td>
+                        <td>{[{.Name}]} {[{if .URL}]}<a href="{[{.URL}]}" target="_blank"><i
+                                    class="fa fa-rocket"></i></a>{[{end}]}</td>
                         <td>{[{if .Git}]}<a href="{[{.Git}]}" target="_blank">打开</a>{[{end}]}</td>
                         <td>{[{.Desc}]}</td>
                         <td>

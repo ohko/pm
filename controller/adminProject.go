@@ -34,6 +34,7 @@ func (o *AdminProjectController) Add(ctx *hst.Context) {
 		Name: ctx.R.FormValue("Name"),
 		Desc: ctx.R.FormValue("Desc"),
 		Git:  ctx.R.FormValue("Git"),
+		URL:  ctx.R.FormValue("URL"),
 	}
 	if err := projects.Save(p); err != nil {
 		o.renderAdminError(ctx, err.Error())
@@ -57,6 +58,7 @@ func (o *AdminProjectController) Edit(ctx *hst.Context) {
 	p.Name = ctx.R.FormValue("Name")
 	p.Desc = ctx.R.FormValue("Desc")
 	p.Git = ctx.R.FormValue("Git")
+	p.URL = ctx.R.FormValue("URL")
 	if err := p.Save(p); err != nil {
 		o.renderAdminError(ctx, err.Error())
 	}
