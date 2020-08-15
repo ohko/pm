@@ -22,6 +22,7 @@ var (
 	members  = model.NewMember()
 	projects = model.NewProject()
 	tasks    = model.NewTask()
+	webhooks = model.NewWebhook()
 )
 
 type controller struct{}
@@ -81,6 +82,7 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 		&AdminUserController{},
 		&AdminProjectController{},
 		&AdminTaskController{},
+		&AdminWebhookController{},
 		&Oauth2Controller{},
 	)
 
@@ -92,6 +94,16 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 				return err.Error()
 			}
 			return string(bs)
+		},
+		"show_commits_url": func(x string) string {
+			var de map[string]interface{}
+			if err := json.Unmarshal([]byte(x), &de); err != nil {
+				return err.Error()
+			}
+			if v, ok := de["commits"]; ok {
+				return (((v.([]interface{}))[0]).(map[string]interface{}))["url"].(string)
+			}
+			return ""
 		},
 	})
 
@@ -110,6 +122,7 @@ func checkAdminLogined(ctx *hst.Context) {
 		for _, v := range []string{
 			"/",
 			"/admin/login",
+			"/admin_webhook/push",
 			"/oauth2/login",
 			"/oauth2/callback",
 		} {

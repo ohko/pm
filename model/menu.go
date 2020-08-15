@@ -33,6 +33,7 @@ func (o *Menu) GetAdminMenu(who string) []Menu {
 		Menu{Class: "fa-user", Text: "成员管理", Href: "/admin_user/list"},
 		Menu{Class: "fa-users", Text: "成员任务列表", Child: usChild},
 		Menu{Class: "fa-tasks", Text: "任务管理", Href: "/admin_task/list"},
+		Menu{Class: "fa-tasks", Text: "Webhook", Href: "/admin_webhook/list"},
 		Menu{Class: "fa-lock", Text: "修改密码", Href: "/admin/password"},
 		Menu{Class: "fa-share", Text: "退出:" + who, Href: "javascript:vueMenu.logout()"},
 	}

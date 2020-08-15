@@ -48,7 +48,7 @@ func initDB(dbPath string) error {
 		return time.Now().In(loc)
 	})
 
-	if err := db.AutoMigrate(&Member{}, &User{}, &Project{}, &Task{}).Error; err != nil {
+	if err := db.AutoMigrate(&Member{}, &User{}, &Project{}, &Task{}, &Webhook{}).Error; err != nil {
 		return err
 	}
 	var m Member

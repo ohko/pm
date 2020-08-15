@@ -1,0 +1,52 @@
+{[{ define "body" }]}
+<section class="content-header">
+    <a href="/admin_webhook/add" class="btn btn-primary">添加</a>
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Webhook</h3>
+        </div>
+        <div class="box-body">
+            <table class="table table-hover" id="list">
+                <thead>
+                    <tr>
+                        <th width="50">WID</th>
+                        <th width="300">时间</th>
+                        <th width="*">地址</th>
+                        <th width="200">-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {[{ range .ps}]}
+                    <tr>
+                        <td>{[{.WID}]}</td>
+                        <td>{[{.Time}]}</td>
+                        <td><a href="{[{.Body|show_commits_url}]}" target="_blank">{[{.Body|show_commits_url}]}</a></td>
+                        <td>
+                            <a href="/admin_webhook/detail?WID={[{.WID}]}" class="btn btn-xs btn-primary">查看</a>
+                            <a href="/admin_webhook/delete?WID={[{.WID}]}" onclick="return confirm('确定删除吗？')"
+                                class="btn btn-xs btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    {[{ end }]}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+        $('#list').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': true,
+            'pageLength': 50,
+            "order": [[0, "desc"]]
+        })
+    })
+</script>
+{[{ end }]}

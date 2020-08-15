@@ -1,5 +1,7 @@
 module pm
 
+go 1.14
+
 require (
 	github.com/jinzhu/gorm v1.9.10
 	github.com/ohko/hst v0.0.0-20190723082303-37546c0812b0
