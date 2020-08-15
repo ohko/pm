@@ -11,7 +11,7 @@
                     <tr>
                         <th width="50">WID</th>
                         <th width="300">时间</th>
-                        <th width="*">地址</th>
+                        <th width="*">信息</th>
                         <th width="200">-</th>
                     </tr>
                 </thead>
@@ -19,8 +19,8 @@
                     {[{ range .ps}]}
                     <tr>
                         <td>{[{.WID}]}</td>
-                        <td>{[{.Time}]}</td>
-                        <td><a href="{[{.Body|show_commits_url}]}" target="_blank">{[{.Body|show_commits_url}]}</a></td>
+                        <td><a href="{[{.Body|show_commits_url}]}" target="_blank">{[{.Time}]}</a></td>
+                        <td>{[{.Body|show_commits_message}]}</td>
                         <td>
                             <a href="/admin_webhook/detail?WID={[{.WID}]}" class="btn btn-xs btn-primary">查看</a>
                             <a href="/admin_webhook/delete?WID={[{.WID}]}" onclick="return confirm('确定删除吗？')"

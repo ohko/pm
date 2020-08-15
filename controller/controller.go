@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -102,6 +103,16 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 			}
 			if v, ok := de["commits"]; ok {
 				return (((v.([]interface{}))[0]).(map[string]interface{}))["url"].(string)
+			}
+			return ""
+		},
+		"show_commits_message": func(x string) template.HTML {
+			var de map[string]interface{}
+			if err := json.Unmarshal([]byte(x), &de); err != nil {
+				return template.HTML(err.Error())
+			}
+			if v, ok := de["commits"]; ok {
+				return template.HTML(strings.ReplaceAll((((v.([]interface{}))[0]).(map[string]interface{}))["message"].(string), "\n", "<br>"))
 			}
 			return ""
 		},
