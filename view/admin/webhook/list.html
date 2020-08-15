@@ -11,6 +11,7 @@
                     <tr>
                         <th width="50">WID</th>
                         <th width="300">时间</th>
+                        <th width="100">提交人</th>
                         <th width="*">信息</th>
                         <th width="200">-</th>
                     </tr>
@@ -20,6 +21,7 @@
                     <tr>
                         <td>{[{.WID}]}</td>
                         <td><a href="{[{.Body|show_commits_url}]}" target="_blank">{[{.Time}]}</a></td>
+                        <td>{[{.Body|show_pusher}]}</td>
                         <td>{[{.Body|show_commits_message}]}</td>
                         <td>
                             <a href="/admin_webhook/detail?WID={[{.WID}]}" class="btn btn-xs btn-primary">查看</a>

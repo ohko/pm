@@ -116,6 +116,16 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 			}
 			return ""
 		},
+		"show_pusher": func(x string) string {
+			var de map[string]interface{}
+			if err := json.Unmarshal([]byte(x), &de); err != nil {
+				return err.Error()
+			}
+			if v, ok := de["pusher"]; ok {
+				return (v.(map[string]interface{}))["username"].(string)
+			}
+			return ""
+		},
 	})
 
 	// 启动web服务
