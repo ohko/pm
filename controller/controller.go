@@ -70,7 +70,7 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 
 	// Session
 	// s.SetSession(hst.NewSessionMemory())
-	s.SetSession(hst.NewSessionFile("", "/", sessionName, sessionPath, time.Minute*30))
+	s.SetSession(hst.NewSessionFile("", "/", sessionName, sessionPath, time.Hour*24*30))
 
 	// 静态文件
 	s.StaticGzip("/public/", "./public/")
@@ -95,6 +95,10 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 				return err.Error()
 			}
 			return string(bs)
+		},
+		"show_time": func(x interface{}) string {
+			t, _ := time.Parse("2006-01-02 15:04:05.999999999 -0700 -0700", (x.(time.Time)).String())
+			return t.Format("2006-01-02 15:04:05")
 		},
 		"show_commits_url": func(x string) string {
 			var de map[string]interface{}

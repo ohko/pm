@@ -16,6 +16,8 @@
                 <!-- /.box-body -->
 
                 <div class="box-footer">
+                    <a href="/admin_webhook/delete?WID={[{.WID}]}" onclick="return confirm('确定删除吗？')"
+                        class="btn btn-xs btn-danger">删除</a>
                 </div>
             </div>
             <!-- /.box -->
@@ -23,4 +25,14 @@
         </div>
     </div>
 </section>
+
+<script>
+    $(function () {
+        if (window.name == "ifr") {
+            $(".main-sidebar").remove()
+            $(".main-header").remove()
+            $(".content-wrapper").css("margin-left", "0")
+        }
+    })
+</script>
 {[{ end }]}

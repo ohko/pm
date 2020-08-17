@@ -1,39 +1,40 @@
 {[{ define "body" }]}
 <section class="content-header">
-    <a href="/admin_webhook/add" class="btn btn-primary">添加</a>
-    <div class="box">
-        <div class="box-header">
-            <h3 class="box-title">Webhook</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-hover" id="list">
+                        <thead>
+                            <tr>
+                                <th width="150">提交</th>
+                                <th width="*">信息</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[{ range .ps}]}
+                            <tr>
+                                <td><a href="/admin_webhook/detail?WID={[{.WID}]}"
+                                        target="ifr">{[{.Time|show_time}]}<br>{[{.Body|show_pusher}]}</a>
+                                </td>
+                                <td><a href="{[{.Body|show_commits_url}]}"
+                                        target="ifr">{[{.Body|show_commits_message}]}</a></td>
+                            </tr>
+                            {[{ end }]}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="box-body">
-            <table class="table table-hover" id="list">
-                <thead>
-                    <tr>
-                        <th width="50">WID</th>
-                        <th width="300">时间</th>
-                        <th width="100">提交人</th>
-                        <th width="*">信息</th>
-                        <th width="200">-</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {[{ range .ps}]}
-                    <tr>
-                        <td>{[{.WID}]}</td>
-                        <td><a href="{[{.Body|show_commits_url}]}" target="_blank">{[{.Time}]}</a></td>
-                        <td>{[{.Body|show_pusher}]}</td>
-                        <td>{[{.Body|show_commits_message}]}</td>
-                        <td>
-                            <a href="/admin_webhook/detail?WID={[{.WID}]}" class="btn btn-xs btn-primary">查看</a>
-                            <a href="/admin_webhook/delete?WID={[{.WID}]}" onclick="return confirm('确定删除吗？')"
-                                class="btn btn-xs btn-danger">删除</a>
-                        </td>
-                    </tr>
-                    {[{ end }]}
-                </tbody>
-            </table>
+        <div class="col-md-8">
+            <div class="box">
+                <div class="box-body">
+                    <iframe name="ifr" style="width:100%;height:100%;border:0"></iframe>
+                </div>
+            </div>
         </div>
     </div>
+
 </section>
 
 
@@ -49,6 +50,8 @@
             'pageLength': 50,
             "order": [[0, "desc"]]
         })
+
+        $("[name=ifr]").height($(window).height() - 100)
     })
 </script>
 {[{ end }]}
