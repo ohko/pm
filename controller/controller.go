@@ -148,7 +148,6 @@ func checkAdminLogined(ctx *hst.Context) {
 			"/",
 			"/admin/login",
 			"/admin_webhook/push",
-			"/admin_webhook/tags",
 			"/oauth2/login",
 			"/oauth2/callback",
 		} {

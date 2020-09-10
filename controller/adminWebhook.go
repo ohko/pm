@@ -91,7 +91,7 @@ func (o *AdminWebhookController) Push(ctx *hst.Context) {
 		ctx.Data(500, err.Error())
 	}
 
-	webhooks.Clean(90)
+	webhooks.Clean(30)
 
 	ctx.Data(200, "ok")
 }
