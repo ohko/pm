@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -22,10 +23,30 @@ type Context struct {
 	templateFuncMap template.FuncMap
 }
 
+// JSONData 输出数据JSON格式
+type JSONData struct {
+	No   int         `json:"no"`
+	Data interface{} `json:"data"`
+}
+
 // Close 结束后面的流程
 func (o *Context) Close() {
 	o.close = true
 	panic(&hstError{"end"})
+}
+
+// Corss 设置跨域
+func (o *Context) Corss() {
+	if o.hst.CrossOrigin != "" {
+		crossOrigin := o.hst.CrossOrigin
+		if o.hst.CrossOrigin == "*" && o.R.Header.Get("Origin") != "" {
+			crossOrigin = o.R.Header.Get("Origin")
+		}
+		o.W.Header().Set("Access-Control-Allow-Origin", crossOrigin)
+		o.W.Header().Set("Access-Control-Allow-Credentials", "true")
+		o.W.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
 }
 
 // JSON 返回json数据，自动识别jsonp
@@ -33,14 +54,7 @@ func (o *Context) JSON(statusCode int, data interface{}) error {
 	defer o.Close()
 	o.status = statusCode
 
-	if o.hst.CrossOrigin != "" {
-		crossOrigin := o.hst.CrossOrigin
-		if o.hst.CrossOrigin == "*" {
-			crossOrigin = o.R.Header.Get("Origin")
-		}
-		o.W.Header().Set("Access-Control-Allow-Origin", crossOrigin)
-		// o.W.Header().Set("Access-Control-Allow-Credentials", "true")
-	}
+	o.Corss()
 	o.W.Header().Set("Content-Type", "application/json")
 
 	bs, err := json.Marshal(data)
@@ -76,7 +90,7 @@ func (o *Context) JSON(statusCode int, data interface{}) error {
 
 // JSON2 返回json数据，自动识别jsonp
 func (o *Context) JSON2(statusCode int, no int, data interface{}) error {
-	return o.JSON(statusCode, &map[string]interface{}{"no": no, "data": data})
+	return o.JSON(statusCode, &JSONData{No: no, Data: data})
 }
 
 // HTML 从模版缓存输出HTML模版，需要hst.ParseGlob或hst.ParseFiles
@@ -86,6 +100,15 @@ func (o *Context) HTML(statusCode int, name string, data interface{}, names ...s
 	o.W.WriteHeader(statusCode)
 	o.W.Header().Set("Content-Type", "text/html; charset=utf-8")
 	o.hst.template.ExecuteTemplate(o.W, name, data)
+}
+
+// IsAjax 是否是ajax请求
+func (o *Context) IsAjax() bool {
+	if o.R.Header.Get("X-Requested-With") == "XMLHttpRequest" ||
+		strings.Contains(o.R.Header.Get("Accept"), "application/json") {
+		return true
+	}
+	return false
 }
 
 // HTML2 实时读取模版输出HTML模版，需要hst.SetTemplatePath
@@ -117,13 +140,7 @@ func (o *Context) HTML2(statusCode int, name string, data interface{}, names ...
 // Data 输出对象数据
 func (o *Context) Data(statusCode int, data interface{}) {
 	defer o.Close()
-	if o.hst.CrossOrigin != "" {
-		crossOrigin := o.hst.CrossOrigin
-		if o.hst.CrossOrigin == "*" {
-			crossOrigin = o.R.Header.Get("Origin")
-		}
-		o.W.Header().Set("Access-Control-Allow-Origin", crossOrigin)
-	}
+	o.Corss()
 	o.status = statusCode
 	o.W.WriteHeader(statusCode)
 	fmt.Fprint(o.W, data)
@@ -131,7 +148,7 @@ func (o *Context) Data(statusCode int, data interface{}) {
 
 // SessionSet 设置Session，默认30分钟后过期
 func (o *Context) SessionSet(key string, value interface{}) error {
-	return o.hst.session.Set(o, key, value, time.Minute*30)
+	return o.hst.session.Set(o, key, value, o.hst.session.GetCookieExpire())
 }
 
 // SessionSetExpire 设置Session，附带过期时间

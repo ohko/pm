@@ -4,25 +4,31 @@
         <div class="col-md-4">
             <div class="box">
                 <div class="box-body">
-                    <table class="table table-hover" id="list">
-                        <thead>
-                            <tr>
-                                <th width="150">提交</th>
-                                <th width="*">信息</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {[{ range .ps}]}
-                            <tr>
-                                <td><a href="/admin_webhook/detail?WID={[{.WID}]}"
-                                        target="ifr">{[{.Time|show_time}]}<br>{[{.Body|show_pusher}]}</a>
-                                </td>
-                                <td><a href="{[{.Body|show_commits_url}]}"
-                                        target="ifr">{[{.Body|show_commits_message}]}</a></td>
-                            </tr>
-                            {[{ end }]}
-                        </tbody>
-                    </table>
+                    <div id="listUser">
+                        <a href="?tag=">ALL</a>
+                        {[{ range .tags}]}| <a href="?tag={[{.}]}">{[{.}]}</a>{[{ end }]}
+                    </div>
+                    <div id="listContainer" style="height: 200px;overflow: scroll;">
+                        <table class="table table-hover" id="list">
+                            <thead>
+                                <tr>
+                                    <th width="150">提交</th>
+                                    <th width="*">信息</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[{ range .ps}]}
+                                <tr>
+                                    <td><a href="/admin_webhook/detail?WID={[{.WID}]}"
+                                            target="ifr">{[{.Time|show_time}]}<br>{[{.Body|show_pusher}]}</a>
+                                    </td>
+                                    <td><a href="{[{.Body|show_commits_url}]}"
+                                            target="ifr">{[{.Body|show_commits_message}]}</a></td>
+                                </tr>
+                                {[{ end }]}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,6 +57,7 @@
             "order": [[0, "desc"]]
         })
 
+        $("#listContainer").height($(window).height() - $("#listUser").height() - 90)
         $("[name=ifr]").height($(window).height() - 100)
     })
 </script>

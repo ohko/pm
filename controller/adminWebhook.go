@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"pm/model"
+	"sort"
 	"strconv"
 	"time"
 
@@ -18,12 +19,18 @@ type AdminWebhookController struct {
 
 // List 列表
 func (o *AdminWebhookController) List(ctx *hst.Context) {
-	ps, err := webhooks.List()
+	tags := webhooks.GetTags()
+	sort.Strings(tags)
+
+	ps, err := webhooks.List(ctx.R.FormValue("tag"))
 	if err != nil {
 		o.renderAdminError(ctx, err.Error())
 	}
 
-	o.renderAdmin(ctx, map[string]interface{}{"ps": ps}, "admin/webhook/list.html")
+	o.renderAdmin(ctx, map[string]interface{}{
+		"tags": tags,
+		"ps":   ps,
+	}, "admin/webhook/list.html")
 }
 
 // Detail 查看
@@ -60,16 +67,38 @@ func (o *AdminWebhookController) Push(ctx *hst.Context) {
 		ctx.Data(500, err.Error())
 	}
 
+	pusher := ""
+	var de map[string]interface{}
+	if err := json.Unmarshal(bs, &de); err != nil {
+		ctx.Data(500, err.Error())
+	}
+	if v, ok := de["pusher"]; ok {
+		pusher = (v.(map[string]interface{}))["full_name"].(string)
+		if pusher == "" {
+			pusher = (v.(map[string]interface{}))["username"].(string)
+		}
+	}
+
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 
 	p := &model.Webhook{
 		Head: string(reqHeadersBytes),
 		Body: string(bs),
 		Time: time.Now().In(loc),
+		Tag:  pusher,
 	}
 	if err := webhooks.Save(p); err != nil {
 		ctx.Data(500, err.Error())
 	}
 
+	webhooks.Clean(90)
+
 	ctx.Data(200, "ok")
+}
+
+// Tags tags
+func (o *AdminWebhookController) Tags(ctx *hst.Context) {
+	tags := webhooks.GetTags()
+
+	ctx.Data(200, tags)
 }

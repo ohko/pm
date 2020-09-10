@@ -32,6 +32,11 @@ func NewSessionMemory(cookieDomain, cookiePath, cookieName string, maxExpire tim
 	return o
 }
 
+// GetCookieExpire 获取cookie的过期时间
+func (o *SessionMemory) GetCookieExpire() time.Duration {
+	return o.cookieExpire
+}
+
 // Set 设置Session
 func (o *SessionMemory) Set(c *Context, key string, value interface{}, expire time.Duration) error {
 	o.lock.Lock()
@@ -48,7 +53,7 @@ func (o *SessionMemory) Set(c *Context, key string, value interface{}, expire ti
 			Expires:  time.Now().Add(o.cookieExpire),
 			HttpOnly: true,
 		}
-		c.R.Header.Set("Cookie", ck.String())
+		c.R.AddCookie(ck)
 		http.SetCookie(c.W, ck)
 	}
 
@@ -107,6 +112,8 @@ func (o *SessionMemory) Destory(c *Context) error {
 		delete(o.data, ck.Value)
 	}
 	ck.Expires = time.Now().Add(-1)
+	ck.Domain = o.cookieDomain
+	ck.Path = o.cookiePath
 	http.SetCookie(c.W, ck)
 	return nil
 }

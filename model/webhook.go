@@ -7,10 +7,11 @@ import (
 
 // Webhook Webhook模型
 type Webhook struct {
-	WID  int    `gorm:"PRIMARY_KEY;AUTO_INCREMENT"`
-	Head string `gorm:"text"` // 头
-	Body string `gorm:"text"` // 内容
-	Time time.Time
+	WID  int       `gorm:"PRIMARY_KEY;AUTO_INCREMENT"`
+	Tag  string    `gorm:"INDEX"`
+	Head string    `gorm:"text"` // 头
+	Body string    `gorm:"text"` // 内容
+	Time time.Time `gorm:"INDEX"`
 }
 
 // NewWebhook ...
@@ -19,9 +20,9 @@ func NewWebhook() *Webhook {
 }
 
 // List ...
-func (o *Webhook) List() ([]*Webhook, error) {
+func (o *Webhook) List(tag string) ([]*Webhook, error) {
 	var ps []*Webhook
-	if err := db.Find(&ps).Error; err != nil {
+	if err := db.Find(&ps, &Webhook{Tag: tag}).Error; err != nil {
 		return nil, err
 	}
 	return ps, nil
@@ -56,4 +57,25 @@ func (o *Webhook) Delete(wid int) error {
 		return errors.New("wid=0")
 	}
 	return db.Delete(&Webhook{WID: wid}).Error
+}
+
+// GetTags ...
+func (o *Webhook) GetTags() []string {
+	tags := []struct {
+		Tag string
+	}{}
+	db.Select("distinct(tag)").Table("webhook").Find(&tags)
+	var rtn []string
+	for _, v := range tags {
+		rtn = append(rtn, v.Tag)
+	}
+	return rtn
+}
+
+// Clean ...
+func (o *Webhook) Clean(days time.Duration) error {
+	if days == 0 {
+		return errors.New("days=0")
+	}
+	return db.Delete(&Webhook{}, "time < ?", time.Now().Add(-time.Hour*24*days)).Error
 }
