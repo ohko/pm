@@ -5,8 +5,12 @@
             <div class="box">
                 <div class="box-body">
                     <div id="listUser">
-                        <a href="?tag=">ALL</a>
-                        {[{ range .tags}]}| <a href="?tag={[{.}]}">{[{.}]}</a>{[{ end }]}
+                        <a href="javascript:void(see(0))">今天</a>
+                        <a href="javascript:void(see(-1))">昨天</a>
+                        <a href="javascript:void(see(-2))">前天</a>
+                        <br>
+                        <a href="?">ALL</a>
+                        {[{ range .tags}]} | <a href="javascript:void(who('{[{.}]}'))">{[{.}]}</a>{[{ end }]}
                     </div>
                     <div id="listContainer" style="height: 200px;overflow: scroll;">
                         <table class="table table-hover" id="list">
@@ -20,7 +24,7 @@
                                 {[{ range .ps}]}
                                 <tr>
                                     <td><a href="/admin_webhook/detail?WID={[{.WID}]}"
-                                            target="ifr">{[{.Time|show_time}]}<br>{[{.Body|show_pusher}]}</a>
+                                            target="ifr">{[{.Time|show_time}]}<br>{[{.Body|show_sender}]}</a>
                                     </td>
                                     <td><a href="{[{.Body|show_commits_url}]}"
                                             target="ifr">{[{.Body|show_commits_message}]}</a></td>
@@ -60,5 +64,26 @@
         $("#listContainer").height($(window).height() - $("#listUser").height() - 90)
         $("[name=ifr]").height($(window).height() - 100)
     })
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    function see(d) {
+        var today = new Date().getTime()
+        var target = new Date(today + 3600 * 24 * 1000 * d + 3600 * 8 * 1000)
+
+        location.href = "?tag=" + getParameterByName("tag") + "&date=" + target.toISOString().substr(0, 10)
+    }
+
+    function who(w) {
+        location.href = "?tag=" + w + "&date=" + getParameterByName("date")
+    }
 </script>
 {[{ end }]}

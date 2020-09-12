@@ -22,7 +22,7 @@ func (o *AdminWebhookController) List(ctx *hst.Context) {
 	tags := webhooks.GetTags()
 	sort.Strings(tags)
 
-	ps, err := webhooks.List(ctx.R.FormValue("tag"))
+	ps, err := webhooks.List(ctx.R.FormValue("tag"), ctx.R.FormValue("date"))
 	if err != nil {
 		o.renderAdminError(ctx, err.Error())
 	}
@@ -72,7 +72,7 @@ func (o *AdminWebhookController) Push(ctx *hst.Context) {
 	if err := json.Unmarshal(bs, &de); err != nil {
 		ctx.Data(500, err.Error())
 	}
-	if v, ok := de["pusher"]; ok {
+	if v, ok := de["sender"]; ok {
 		pusher = (v.(map[string]interface{}))["full_name"].(string)
 		if pusher == "" {
 			pusher = (v.(map[string]interface{}))["username"].(string)

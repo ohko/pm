@@ -120,12 +120,15 @@ func Start(addr, sessionPath, oauth2Server string, lll *logger.Logger) {
 			}
 			return ""
 		},
-		"show_pusher": func(x string) string {
+		"show_sender": func(x string) string {
 			var de map[string]interface{}
 			if err := json.Unmarshal([]byte(x), &de); err != nil {
 				return err.Error()
 			}
-			if v, ok := de["pusher"]; ok {
+			if v, ok := de["sender"]; ok {
+				if (v.(map[string]interface{}))["full_name"].(string) != "" {
+					return (v.(map[string]interface{}))["full_name"].(string)
+				}
 				return (v.(map[string]interface{}))["username"].(string)
 			}
 			return ""

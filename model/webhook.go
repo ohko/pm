@@ -20,10 +20,30 @@ func NewWebhook() *Webhook {
 }
 
 // List ...
-func (o *Webhook) List(tag string) ([]*Webhook, error) {
+func (o *Webhook) List(tag, date string) ([]*Webhook, error) {
 	var ps []*Webhook
-	if err := db.Find(&ps, &Webhook{Tag: tag}).Error; err != nil {
-		return nil, err
+	if tag == "null" {
+		tag = ""
+	}
+	if date == "null" {
+		date = ""
+	}
+	if tag != "" && date != "" {
+		if err := db.Find(&ps, "tag = ? AND (time>=? AND time<=?)", tag, date+" 00:00:00", date+" 23:59:59").Error; err != nil {
+			return nil, err
+		}
+	} else if tag != "" {
+		if err := db.Find(&ps, "tag = ?", tag).Error; err != nil {
+			return nil, err
+		}
+	} else if date != "" {
+		if err := db.Find(&ps, "time>=? AND time<=?", date+" 00:00:00", date+" 23:59:59").Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := db.Find(&ps).Error; err != nil {
+			return nil, err
+		}
 	}
 	return ps, nil
 }
